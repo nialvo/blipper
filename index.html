@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
+    <title>Blipper</title>
+</head>
+
+<body>
+    <button type="button" id="resume-button">allow mic</button>
+
+    <h3>Pitch</h3>
+    <h3 id="pitch"></h3>
+
+    <h3>Clarity</h3>
+    <h3 id="clarity"></h3>
+
+
+    <div id ="sliders" >
+
+        <h3 id="sens">50</h3>
+        <h3>Sensitivity</h3>
+        <input type="range" name="sens" min="0" max="100" >
+
+        <h3 id="freq">50</h3>
+        <h3>Frequency</h3>
+        <input type="range" name="freq" min="60" max="1920" >
+
+        <h3 id="temp">50</h3>
+        <h3>Tempo</h3>
+        <input type="range" name="temp" min="60" max="1920" >
+
+        <h3 id="late">50</h3>
+        <h3>Latency</h3>
+        <input type="range" name="late" min="0" max="100" >
+
+        <h3 id="deca">50</h3>
+        <h3>Decay</h3>
+        <input type="range" name="deca" min="0" max="30" >
+
+        <h3 id="dura">50</h3>
+        <h3>Duration</h3>
+        <input type="range" name="dura" min="1" max="96" >
+
+    </div>
+
+    
+    <script type="text/javascript" src="./assets/js/autotuner.js"></script>
+    <script type="text/javascript" src="./assets/js/musical_min.js"></script>
+    <script type="text/javascript" src="./assets/js/fft.js"></script>
+    <script type="text/javascript" src="./assets/js/pitchy.js"></script>
+    <script type="text/javascript" src="./assets/js/blipper.js"></script>
+    
+</body>
+</html>
