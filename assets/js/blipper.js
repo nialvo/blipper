@@ -1,11 +1,42 @@
+document.addEventListener("DOMContentLoaded", () => {
+
+async function voldetect(){
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  const audioContext = new AudioContext();
+  const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
+  const analyserNode = audioContext.createAnalyser();
+  mediaStreamAudioSourceNode.connect(analyserNode);
+
+  const pcmData = new Float32Array(analyserNode.fftSize);
+  const onFrame = () => {
+    analyserNode.getFloatTimeDomainData(pcmData);
+    let sumSquares = 0.0;
+    for (const amplitude of pcmData) { sumSquares += amplitude*amplitude; }
+    vals.vol = Math.sqrt(sumSquares / pcmData.length)
+    document.getElementById("volume").innerText = Math.round(vals.vol*100000)/100000;
+    window.requestAnimationFrame(onFrame);
+  };
+  window.requestAnimationFrame(onFrame);
+
+}
+
+voldetect();
+
+
+
 
 const para = {
-  temp: 120,
-  late: 15,
+  temp: 156,
+  late: 0,
   deca: 5,
   sens: 5,
-  freq: 120,
+  pens: 10,
+  freq: 156,
   dura: 24
+}
+
+const vals = {
+  vol:0
 }
 
 document.getElementById("temp").textContent = para.temp;
@@ -16,6 +47,8 @@ document.getElementById("deca").textContent = para.deca;
 document.getElementsByName("deca")[0].value = para.deca;
 document.getElementById("sens").textContent = para.sens;
 document.getElementsByName("sens")[0].value = para.sens;
+document.getElementById("pens").textContent = para.pens;
+document.getElementsByName("pens")[0].value = para.pens;
 document.getElementById("freq").textContent = para.freq;
 document.getElementsByName("freq")[0].value = para.freq;
 document.getElementById("dura").textContent = para.dura;
@@ -28,6 +61,7 @@ const inst = new Instrument();
 
 const sa=[0,4,7,11,14,17,21,24,28,31,35,38,41,45,48,52,55,59,62,65,69,72,69,65,62,59,55,52,48,45,41,38,35,31,28,24,21,17,14,11,7,4,0,4,7,11,14,17,21,24,28,31,35,38,41,45,48,52,55,59,62,65,69,72,69,65,62,59,55,52,48,45,41,38,35,31,28,24,21,17,14,11,7,4,0]
 const sb=[7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24]
+const sc=[7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24]
 
 function blip(N,style) {
 
@@ -60,8 +94,8 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
 
   document.getElementById("pitch").textContent = `${Math.round(pitch * 10) / 10} Hz`;
 
-  if(clarity>(1-para.sens/100)){
-    blip(autotunerMidi(pitch),sb);
+  if(clarity>=(1-para.pens/100)&&vals.vol>(.1-(para.sens/100))){
+    blip(autotunerMidi(pitch),sc);
   }
   
 
@@ -74,7 +108,7 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
   );
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+
   const audioContext = new window.AudioContext();
   const analyserNode = audioContext.createAnalyser();
 
@@ -88,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = new Float32Array(detector.inputLength);
     updatePitch(analyserNode, detector, input, audioContext.sampleRate);
   });
-});
+
 
 
 
@@ -102,7 +136,7 @@ slider.oninput = function (e) {
   para[e.target.name] = e.target.value;
 }
 
-
+});
 
 /*
 // Play a single tone immediately.  Tones may be also specified
