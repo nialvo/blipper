@@ -36,7 +36,9 @@ const para = {
 }
 
 const vals = {
-  vol:0
+  vol:0,
+  curr_vol:0,
+  curr_note:0
 }
 
 document.getElementById("temp").textContent = para.temp;
@@ -63,12 +65,14 @@ const sa=[0,4,7,11,14,17,21,24,28,31,35,38,41,45,48,52,55,59,62,65,69,72,69,65,6
 const sb=[7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24,7,0,-5,0,7,12,19,24,-12,-5,-17,-5,7,0,7,-5,7,0,12,-12,24,-24]
 const sc=[7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24,0,7,12,19,24]
 
-function blip(N,style) {
+function blip(N,style,vol) {
 
  let inter= (60/para.temp)*1000
+  /*
   console.log(style.length)
   let c=0;
   let k=Math.min(para.dura,style.length)
+  
   while(c<para.dura){
     let t = c*inter+para.late*10;
     let n = style[c];
@@ -81,6 +85,13 @@ function blip(N,style) {
     c++;
 
   }
+  */
+
+  setTimeout(
+    () => inst.tone(-N,1,vol),
+    2000
+  );
+
 
   
 }
@@ -93,10 +104,24 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
   const [pitch, clarity] = detector.findPitch(input, sampleRate);
 
   document.getElementById("pitch").textContent = `${Math.round(pitch * 10) / 10} Hz`;
+  
+  if(clarity>=(1-para.pens/100)&&vals.vol>(.1-(para.sens/100))){//if there is loud and clear input
+    let v = vals.vol
+    let x = v+1;
+    let y = x-1;
+    let note = autotunerMidi(pitch)//get closest midi note
+    
 
-  if(clarity>=(1-para.pens/100)&&vals.vol>(.1-(para.sens/100))){
-    blip(autotunerMidi(pitch),sc);
+    if (note!=vals.curr_note){//if this is a new note play it
+      blip(note,sc,v);
+      vals.curr_note=note
+    }else if (v>vals.curr_vol){//if this is the same note repeated play it
+      blip(note,sc, v);
+    }
+    
+    vals.curr_vol=y//set current volume
   }
+  
   
 
   document.getElementById("clarity").textContent = `${Math.round(
@@ -109,7 +134,7 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
 }
 
 
-  const audioContext = new window.AudioContext();
+const audioContext = new window.AudioContext();
   const analyserNode = audioContext.createAnalyser();
 
   document
