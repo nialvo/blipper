@@ -29,8 +29,7 @@ const para = {
   temp: 156,
   late: 0,
   deca: 5,
-  sens: 5,
-  pens: 10,
+  sens: .001,
   freq: 156,
   dura: 24
 }
@@ -47,10 +46,6 @@ document.getElementById("late").textContent = para.late;
 document.getElementsByName("late")[0].value = para.late;
 document.getElementById("deca").textContent = para.deca;
 document.getElementsByName("deca")[0].value = para.deca;
-document.getElementById("sens").textContent = para.sens;
-document.getElementsByName("sens")[0].value = para.sens;
-document.getElementById("pens").textContent = para.pens;
-document.getElementsByName("pens")[0].value = para.pens;
 document.getElementById("freq").textContent = para.freq;
 document.getElementsByName("freq")[0].value = para.freq;
 document.getElementById("dura").textContent = para.dura;
@@ -103,9 +98,9 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
   analyserNode.getFloatTimeDomainData(input);
   const [pitch, clarity] = detector.findPitch(input, sampleRate);
 
-  document.getElementById("pitch").textContent = `${Math.round(pitch * 10) / 10} Hz`;
+  // document.getElementById("pitch").textContent = `${Math.round(pitch * 10) / 10} Hz`;
   
-  if(clarity>=(1-para.pens/100)&&vals.vol>(.1-(para.sens/100))){//if there is loud and clear input
+  if( vals.vol>para.sens ){//if there is loud and clear input
     let v = vals.vol
     let x = v+1;
     let y = x-1;
@@ -124,9 +119,7 @@ function updatePitch(analyserNode, detector, input, sampleRate) {
   
   
 
-  document.getElementById("clarity").textContent = `${Math.round(
-    clarity * 100
-  )} %`;
+  
   window.setTimeout(
     () => updatePitch(analyserNode, detector, input, sampleRate),
     60000/para.freq

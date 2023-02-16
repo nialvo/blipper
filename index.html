@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./assets/css/style.css" type="text/css">
+    <!-- <link rel="stylesheet" href="./assets/css/style.css" type="text/css"> -->
     <title>Blipper</title>
 </head>
 
@@ -23,13 +23,27 @@
 
     <div id ="sliders" >
 
-        <h3 id="sens">50</h3>
-        <h3>Sensitivity</h3>
-        <input type="range" name="sens" min="0" max="100" >
 
-        <h3 id="pens">50</h3>
-        <h3>Pitch Sensitivity</h3>
-        <input type="range" name="pens" min="0" max="100" >
+        <fieldset>
+            <legend>Sensitivity</legend>
+        
+            <div>
+              <input type="radio" id="low" name="sens" value=.005>
+              <label for="low">low</label>
+            </div>
+        
+            <div>
+              <input type="radio" id="med" name="sens" value=.001 checked>
+              <label for="med">med</label>
+            </div>
+        
+            <div>
+              <input type="radio" id="high" name="sens" value=.0005>
+              <label for="high">high</label>
+            </div>
+        </fieldset>
+
+    
 
         <h3 id="freq">50</h3>
         <h3>Frequency</h3>
